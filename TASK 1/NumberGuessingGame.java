@@ -11,13 +11,19 @@ public class NumberGuessingGame {
         boolean playAgain = true;
 
         System.out.println("Welcome to the Number Guessing Game!");
-
+        System.out.println("\nScoring Rules:");
+        System.out.println(" - Earn 2 points for guessing the correct number.");
+        System.out.println(" - Earn 0.5 points for being very close (within 1 of the target) if you fail to guess the number.");
+        System.out.println(" - Your score resets if you play again after failing a round.");
+        System.out.println(" - Proceed to the next level when you guess correctly.");
+        
         while (playAgain) {
             boolean guessedCorrectly = false;
 
             while (true) { // Loop for levels
                 int targetNumber = random.nextInt(100) + 1;
                 int attemptsLeft = 5; // Reset attempts for each new level
+                boolean closeBonusUsed = false; // To track if 0.5 bonus for "almost" was awarded
 
                 // Provide hints about the target number
                 System.out.println("\nHints about the number you are looking for:");
@@ -37,15 +43,12 @@ public class NumberGuessingGame {
 
                     if (userGuess == targetNumber) {
                         System.out.println("Congratulations! You guessed the correct number!");
-                        if (!guessedCorrectly) {
-                            score += 2; // Full 2 points for the first correct guess
-                        }
+                        score += 2; // Full 2 points for guessing correctly
                         guessedCorrectly = true;
-                        score += 0.5; // Additional 0.5 points for guessing correctly
                         break; // Break out of attempts loop to move to the next level
-                    } else if (Math.abs(userGuess - targetNumber) == 1) {
+                    } else if (!closeBonusUsed && Math.abs(userGuess - targetNumber) == 1) {
                         System.out.println("Almost! You're very close.");
-                        score += 0.5; // Half a point for being one away
+                        closeBonusUsed = true; // Mark that the "almost" feedback was given
                     } else if (userGuess > targetNumber) {
                         System.out.println("Too high!");
                     } else {
@@ -54,7 +57,10 @@ public class NumberGuessingGame {
                     attemptsLeft--;
                 }
 
-                if (!guessedCorrectly && attemptsLeft == 0) {
+                if (!guessedCorrectly) {
+                    if (closeBonusUsed) {
+                        score += 0.5; // Award 0.5 points if the user was close but failed
+                    }
                     System.out.println("The correct number was: " + targetNumber);
                     System.out.println("Game over! Your total score was: " + score);
                     break; // Exit the level loop to ask if they want to play again
