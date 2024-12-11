@@ -1,81 +1,95 @@
-// Importing necessary packages for input and random number generation
 import java.util.Random;
 import java.util.Scanner;
 
 public class NumberGuessingGame {
 
     public static void main(String[] args) {
-        // Create a Scanner object to read input from the user
         Scanner scanner = new Scanner(System.in);
-        // Create a Random object to generate random numbers
         Random random = new Random();
 
-        // Initialize variables to keep track of the score and round
-        int score = 0;
-        boolean playAgain = true; // Variable to control multiple rounds
+        double score = 0; // Using double to handle half-point scores
+        boolean playAgain = true;
 
         System.out.println("Welcome to the Number Guessing Game!");
 
-        while (playAgain) { // Start the game loop
-            // Generate a random number between 1 and 100 (inclusive)
-            int targetNumber = random.nextInt(100) + 1;
-
-            // Let the user know the range
-            System.out.println("\nGuess a number between 1 and 100!");
-
-            // Limit the user to 5 attempts
-            int attemptsLeft = 5;
-
-            // Variable to track whether the user guessed correctly
+        while (playAgain) {
             boolean guessedCorrectly = false;
 
-            // Loop until the user guesses the correct number or runs out of attempts
-            while (attemptsLeft > 0) {
-                // Show remaining attempts to the user
-                System.out.println("Attempts left: " + attemptsLeft);
-                System.out.print("Enter your guess: ");
+            while (true) { // Loop for levels
+                int targetNumber = random.nextInt(100) + 1;
+                int attemptsLeft = 5; // Reset attempts for each new level
 
-                // Read the user's guess
-                int userGuess = scanner.nextInt();
-
-                // Compare the guess to the target number
-                if (userGuess == targetNumber) {
-                    System.out.println("Congratulations! You guessed the correct number!");
-                    guessedCorrectly = true;
-                    score += 10; // Award 10 points for a correct guess
-                    break;
-                } else if (userGuess > targetNumber) {
-                    System.out.println("Too high! Try again.");
+                // Provide hints about the target number
+                System.out.println("\nHints about the number you are looking for:");
+                System.out.println(" - It is " + (targetNumber % 2 == 0 ? "even" : "odd") + ".");
+                if (isPrime(targetNumber)) {
+                    System.out.println(" - It is a prime number.");
                 } else {
-                    System.out.println("Too low! Try again.");
+                    System.out.println(" - It is not a prime number.");
                 }
 
-                // Reduce the remaining attempts
-                attemptsLeft--;
+                System.out.println("\nGuess a number between 1 and 100!");
+
+                while (attemptsLeft > 0) {
+                    System.out.println("Attempts left: " + attemptsLeft);
+                    System.out.print("Enter your guess: ");
+                    int userGuess = scanner.nextInt();
+
+                    if (userGuess == targetNumber) {
+                        System.out.println("Congratulations! You guessed the correct number!");
+                        if (!guessedCorrectly) {
+                            score += 2; // Full 2 points for the first correct guess
+                        }
+                        guessedCorrectly = true;
+                        score += 0.5; // Additional 0.5 points for guessing correctly
+                        break; // Break out of attempts loop to move to the next level
+                    } else if (Math.abs(userGuess - targetNumber) == 1) {
+                        System.out.println("Almost! You're very close.");
+                        score += 0.5; // Half a point for being one away
+                    } else if (userGuess > targetNumber) {
+                        System.out.println("Too high!");
+                    } else {
+                        System.out.println("Too low!");
+                    }
+                    attemptsLeft--;
+                }
+
+                if (!guessedCorrectly && attemptsLeft == 0) {
+                    System.out.println("The correct number was: " + targetNumber);
+                    System.out.println("Game over! Your total score was: " + score);
+                    break; // Exit the level loop to ask if they want to play again
+                }
+
+                // If guessed correctly, proceed to the next level
+                System.out.println("Your score: " + score);
+                System.out.println("Proceeding to the next level...");
+                guessedCorrectly = false; // Reset correct guess status for the next level
             }
 
-            // If the user didn't guess correctly, show the target number
-            if (!guessedCorrectly) {
-                System.out.println("You've run out of attempts! The correct number was: " + targetNumber);
-            }
-
-            // Display the user's current score
-            System.out.println("Your score: " + score);
-
-            // Ask if the user wants to play another round
-            System.out.print("Do you want to play again? (yes/no): ");
+            // Ask if the user wants to play again after failing
+            System.out.print("Play again? (yes/no): ");
             String response = scanner.next();
-
-            // If the user types "no", exit the game loop
             if (response.equalsIgnoreCase("no")) {
                 playAgain = false;
+            } else {
+                score = 0; // Secretly reset score without informing the user
             }
         }
 
-        // Thank the user for playing
-        System.out.println("Thank you for playing! Your final score is: " + score);
-
-        // Close the Scanner to free resources
+        System.out.println("Thank you for playing!");
         scanner.close();
+    }
+
+    // Function to check if a number is prime
+    private static boolean isPrime(int number) {
+        if (number <= 1) {
+            return false;
+        }
+        for (int i = 2; i <= Math.sqrt(number); i++) {
+            if (number % i == 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }
