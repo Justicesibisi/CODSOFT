@@ -5,7 +5,6 @@ public class QuizApplication {
     private static final int TIME_LIMIT = 20; // seconds per question
     private static final int MAX_FAILS = 3; // Maximum failed attempts before game over
 
-    // Question class to represent a quiz question
     static class Question {
         String question;
         String[] options;
@@ -80,7 +79,7 @@ public class QuizApplication {
         }
     }
 
-    // Display instructions to the user
+    // Display instructions
     private static void displayInstructions() {
         System.out.println("Welcome to the Quiz Application!");
         System.out.println("Instructions:");
@@ -91,7 +90,7 @@ public class QuizApplication {
         System.out.println("5. Your final score will be displayed at the end.\n");
     }
 
-    // Initialize quiz questions
+    // quiz questions
     private static List<Question> initializeQuestions() {
         List<Question> questions = new ArrayList<>();
         questions.add(new Question("What is the capital of South Africa?",
